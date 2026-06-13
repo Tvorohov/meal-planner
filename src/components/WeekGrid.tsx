@@ -5,6 +5,7 @@ export function WeekGrid() {
   const weeks = usePlanner((s) => s.weeks);
   const assignments = usePlanner((s) => s.assignments);
   const dishes = usePlanner((s) => s.dishes);
+  const startDate = usePlanner((s) => s.startDate);
   const removeLastWeek = usePlanner((s) => s.removeLastWeek);
 
   const handleRemove = (weekIndex: number) => {
@@ -29,6 +30,7 @@ export function WeekGrid() {
           isLast={w === weeks - 1 && weeks > 1}
           assignments={assignments}
           dishes={dishes}
+          startDate={startDate}
           onRemove={() => handleRemove(w)}
         />
       ))}

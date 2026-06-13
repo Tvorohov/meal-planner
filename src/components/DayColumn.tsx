@@ -1,5 +1,6 @@
 import type { Assignment, Dish } from "../types";
 import { DAY_LABELS } from "../types";
+import { dateOf, formatShort, isSameDay } from "../lib/dates";
 import { MealSlot } from "./MealSlot";
 
 export function DayColumn({
@@ -7,11 +8,13 @@ export function DayColumn({
   dayIndex,
   assignments,
   dishes,
+  startDate,
 }: {
   weekIndex: number;
   dayIndex: number;
   assignments: Assignment[];
   dishes: Record<string, Dish>;
+  startDate: string;
 }) {
   const forDay = assignments.filter(
     (a) => a.weekIndex === weekIndex && a.dayIndex === dayIndex,
@@ -19,10 +22,27 @@ export function DayColumn({
   const breakfast = forDay.filter((a) => a.mealType === "breakfast");
   const dinner = forDay.filter((a) => a.mealType === "dinner");
 
+  const date = dateOf(startDate, weekIndex, dayIndex);
+  const today = isSameDay(date, new Date());
+
   return (
-    <div className="flex flex-col gap-2 rounded-lg border border-slate-200 bg-white p-2">
-      <div className="text-center text-sm font-semibold text-slate-600">
-        {DAY_LABELS[dayIndex]}
+    <div
+      className={`flex flex-col gap-2 rounded-lg border bg-white p-2 ${
+        today ? "border-emerald-400 ring-1 ring-emerald-200" : "border-slate-200"
+      }`}
+    >
+      <div className="text-center">
+        <div
+          className={`text-sm font-semibold ${
+            today ? "text-emerald-600" : "text-slate-600"
+          }`}
+        >
+          {DAY_LABELS[dayIndex]}
+        </div>
+        <div className={`text-[10px] ${today ? "text-emerald-500" : "text-slate-400"}`}>
+          {formatShort(date)}
+          {today && " · сегодня"}
+        </div>
       </div>
       <MealSlot
         weekIndex={weekIndex}

@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import {
+  CalendarDays,
   CalendarPlus,
   Download,
   Menu as MenuIcon,
@@ -35,11 +36,13 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
   const addWeek = usePlanner((s) => s.addWeek);
   const resetAll = usePlanner((s) => s.resetAll);
   const importState = usePlanner((s) => s.importState);
+  const startDate = usePlanner((s) => s.startDate);
+  const setStartDate = usePlanner((s) => s.setStartDate);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const handleExport = () => {
-    const { dishes, assignments, weeks } = usePlanner.getState();
-    const data: PlannerState = { dishes, assignments, weeks };
+    const { dishes, assignments, weeks, startDate } = usePlanner.getState();
+    const data: PlannerState = { dishes, assignments, weeks, startDate };
     const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
@@ -86,6 +89,19 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
       </div>
 
       <div className="ml-auto flex flex-wrap items-center gap-2">
+        <label
+          className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-500"
+          title="Понедельник первой недели"
+        >
+          <CalendarDays size={14} className="text-slate-400" />
+          <span className="hidden md:inline">Старт</span>
+          <input
+            type="date"
+            value={startDate}
+            onChange={(e) => e.target.value && setStartDate(e.target.value)}
+            className="bg-transparent text-slate-600 outline-none"
+          />
+        </label>
         <ToolbarButton
           onClick={addWeek}
           icon={<CalendarPlus size={14} />}

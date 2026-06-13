@@ -1,14 +1,26 @@
 import type { Assignment, Dish, MealType, PlannerState } from "./types";
 import { newId } from "./lib/ids";
+import { mondayOf, toISODate } from "./lib/dates";
+
+/**
+ * Old dish name -> corrected name. Used by the store's persist migration so
+ * existing saved plans pick up grammar fixes without losing assignments.
+ */
+export const DISH_RENAMES: Record<string, string> = {
+  "Сэндвич с тюркей-беконом и яйцом": "Сэндвич с беконом из индейки и яйцом",
+  "Яичница с белком и салатом": "Белковая яичница с салатом",
+  "Куриные бедра в азиатском соусе": "Куриные бёдра в азиатском соусе",
+  "Куриные бедра барбекю": "Куриные бёдра барбекю",
+};
 
 export const seedDishes: Omit<Dish, "id">[] = [
   // breakfasts
-  { name: "Сэндвич с тюркей-беконом и яйцом", mealTypes: ["breakfast"], tags: [] },
+  { name: "Сэндвич с беконом из индейки и яйцом", mealTypes: ["breakfast"], tags: [] },
   { name: "Сырники", mealTypes: ["breakfast"], tags: ["sweet"] },
   { name: "Овсянка с грибами", mealTypes: ["breakfast"], tags: ["veg"] },
   { name: "Тост с тунцом", mealTypes: ["breakfast"], tags: ["fish"] },
   { name: "Тост с сардинами", mealTypes: ["breakfast"], tags: ["fish"] },
-  { name: "Яичница с белком и салатом", mealTypes: ["breakfast"], tags: [] },
+  { name: "Белковая яичница с салатом", mealTypes: ["breakfast"], tags: [] },
   { name: "Блинчики с начинкой и сладкие", mealTypes: ["breakfast"], tags: ["sweet"] },
   { name: "Шакшука", mealTypes: ["breakfast"], tags: [] },
   { name: "Оладьи", mealTypes: ["breakfast"], tags: ["sweet", "kid"] },
@@ -25,8 +37,8 @@ export const seedDishes: Omit<Dish, "id">[] = [
     tags: ["seafood"],
   },
   { name: "Паста болоньезе", mealTypes: ["dinner"], tags: ["beef"] },
-  { name: "Куриные бедра в азиатском соусе", mealTypes: ["dinner"], tags: ["chicken"] },
-  { name: "Куриные бедра барбекю", mealTypes: ["dinner"], tags: ["chicken"] },
+  { name: "Куриные бёдра в азиатском соусе", mealTypes: ["dinner"], tags: ["chicken"] },
+  { name: "Куриные бёдра барбекю", mealTypes: ["dinner"], tags: ["chicken"] },
   { name: "Курица по-французски", mealTypes: ["dinner"], tags: ["chicken"] },
   { name: "Биточки", mealTypes: ["dinner"], tags: ["beef"] },
   { name: "Индейка", mealTypes: ["dinner"], tags: ["turkey"] },
@@ -50,13 +62,13 @@ const SAMPLE_PLAN: Array<{
   {
     week: 0,
     breakfasts: [
-      "Сэндвич с тюркей-беконом и яйцом",
+      "Сэндвич с беконом из индейки и яйцом",
       "Сырники",
       "Тост с тунцом",
       "Овсянка с грибами",
       "Шакшука",
       "Оладьи",
-      "Яичница с белком и салатом",
+      "Белковая яичница с салатом",
     ],
     dinners: [
       "Куриные котлеты, гарнир, салат",
@@ -65,7 +77,7 @@ const SAMPLE_PLAN: Array<{
       "Азиатская лапша",
       "Митболы, гарнир, салат",
       "Бургеры",
-      "Куриные бедра в азиатском соусе",
+      "Куриные бёдра в азиатском соусе",
     ],
   },
   {
@@ -139,5 +151,6 @@ export function buildInitialState(): PlannerState {
     dishes,
     assignments: buildSamplePlan(idByName),
     weeks: 2,
+    startDate: toISODate(mondayOf(new Date())),
   };
 }

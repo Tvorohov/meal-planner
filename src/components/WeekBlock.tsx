@@ -1,5 +1,6 @@
 import { Trash2 } from "lucide-react";
 import type { Assignment, Dish } from "../types";
+import { formatWeekRange } from "../lib/dates";
 import { DayColumn } from "./DayColumn";
 
 export function WeekBlock({
@@ -7,12 +8,14 @@ export function WeekBlock({
   isLast,
   assignments,
   dishes,
+  startDate,
   onRemove,
 }: {
   weekIndex: number;
   isLast: boolean;
   assignments: Assignment[];
   dishes: Record<string, Dish>;
+  startDate: string;
   onRemove: () => void;
 }) {
   return (
@@ -20,6 +23,9 @@ export function WeekBlock({
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-slate-500">
           Неделя {weekIndex + 1}
+          <span className="ml-2 font-normal text-slate-400">
+            {formatWeekRange(startDate, weekIndex)}
+          </span>
         </h2>
         {isLast && (
           <button
@@ -40,6 +46,7 @@ export function WeekBlock({
             dayIndex={day}
             assignments={assignments}
             dishes={dishes}
+            startDate={startDate}
           />
         ))}
       </div>

@@ -33,6 +33,7 @@ export interface PlannerState {
   dishes: Record<string, Dish>; // catalog, keyed by id
   assignments: Assignment[];
   weeks: number; // default 2
+  startDate: string; // local YYYY-MM-DD of week 0 / Monday
 }
 
 export const DAY_LABELS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] as const;

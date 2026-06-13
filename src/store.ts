@@ -2,7 +2,8 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Assignment, Dish, DishTag, MealType, PlannerState } from "./types";
 import { newId } from "./lib/ids";
-import { buildInitialState } from "./seed";
+import { buildInitialState, DISH_RENAMES } from "./seed";
+import { mondayOf, parseISODate, toISODate } from "./lib/dates";
 
 export interface SlotRef {
   weekIndex: number;
@@ -23,6 +24,7 @@ interface PlannerActions {
   deleteDish: (id: string) => void;
   addWeek: () => void;
   removeLastWeek: () => void;
+  setStartDate: (iso: string) => void;
   createAssignment: (dishId: string, slot: SlotRef) => void;
   moveAssignment: (
     assignmentId: string,
@@ -69,6 +71,10 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
         }),
 
       addWeek: () => set((s) => ({ weeks: s.weeks + 1 })),
+
+      // Always snap to the Monday of the chosen week.
+      setStartDate: (iso) =>
+        set(() => ({ startDate: toISODate(mondayOf(parseISODate(iso))) })),
 
       removeLastWeek: () =>
         set((s) => {
@@ -124,10 +130,33 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
           dishes: state.dishes,
           assignments: state.assignments,
           weeks: state.weeks,
+          startDate: state.startDate || toISODate(mondayOf(new Date())),
         })),
 
       resetAll: () => set(() => buildInitialState()),
     }),
-    { name: "meal-planner-v1", version: 1 },
+    {
+      name: "meal-planner-v1",
+      version: 2,
+      // Bring older saved plans up to date: apply dish-name grammar fixes
+      // and backfill the calendar start date.
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<PlannerState> | undefined;
+        if (!state) return persisted as PlannerState;
+        if (version < 2) {
+          if (state.dishes) {
+            for (const id of Object.keys(state.dishes)) {
+              const dish = state.dishes[id];
+              const renamed = DISH_RENAMES[dish.name];
+              if (renamed) dish.name = renamed;
+            }
+          }
+          if (!state.startDate) {
+            state.startDate = toISODate(mondayOf(new Date()));
+          }
+        }
+        return state as PlannerState;
+      },
+    },
   ),
 );
