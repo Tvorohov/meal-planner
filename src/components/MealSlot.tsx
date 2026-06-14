@@ -1,12 +1,7 @@
-import { useDroppable } from "@dnd-kit/core";
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
+import { useMemo } from "react";
 import type { Assignment, Dish, MealType } from "../types";
 import { MEAL_LABELS } from "../types";
-import { assignmentDragId, slotDropId } from "../lib/dnd";
-import { useDrag } from "../context";
+import { usePlanner } from "../store";
 import { AssignmentCard } from "./AssignmentCard";
 
 export function MealSlot({
@@ -22,45 +17,49 @@ export function MealSlot({
   assignments: Assignment[];
   dishes: Record<string, Dish>;
 }) {
-  const id = slotDropId(weekIndex, dayIndex, mealType);
-  const { setNodeRef, isOver } = useDroppable({ id });
-  const { activeMealTypes } = useDrag();
+  const createAssignment = usePlanner((s) => s.createAssignment);
 
-  const dragging = activeMealTypes !== null;
-  const compatible = !dragging || activeMealTypes!.includes(mealType);
-  const items = assignments
-    .slice()
-    .sort((a, b) => a.order - b.order);
+  const items = assignments.slice().sort((a, b) => a.order - b.order);
 
-  // Visual state during drag.
-  let ring = "border-slate-200";
-  if (dragging && !compatible) ring = "border-slate-200 opacity-40";
-  else if (isOver && compatible) ring = "border-emerald-400 bg-emerald-50";
-  else if (isOver && !compatible) ring = "border-rose-300 bg-rose-50";
+  // Dishes that can go into this meal slot, sorted by name.
+  const options = useMemo(
+    () =>
+      Object.values(dishes)
+        .filter((d) => d.mealTypes.includes(mealType))
+        .sort((a, b) => a.name.localeCompare(b.name, "uk")),
+    [dishes, mealType],
+  );
 
   return (
     <div className="space-y-1">
       <div className="px-0.5 text-[10px] font-semibold uppercase tracking-wide text-slate-400">
         {MEAL_LABELS[mealType]}
       </div>
-      <div
-        ref={setNodeRef}
-        className={`min-h-[3.25rem] space-y-1 rounded-md border border-dashed p-1 transition ${ring}`}
-      >
-        <SortableContext
-          items={items.map((a) => assignmentDragId(a.id))}
-          strategy={verticalListSortingStrategy}
-        >
-          {items.map((a) => (
-            <AssignmentCard key={a.id} assignment={a} dish={dishes[a.dishId]} />
-          ))}
-        </SortableContext>
+      <div className="space-y-1 rounded-md border border-slate-100 bg-slate-50/60 p-1">
+        {items.map((a) => (
+          <AssignmentCard key={a.id} assignment={a} dish={dishes[a.dishId]} />
+        ))}
 
-        {items.length === 0 && (
-          <div className="flex h-9 items-center justify-center text-[10px] text-slate-300">
-            перетягніть сюди
-          </div>
-        )}
+        <select
+          value=""
+          onChange={(e) => {
+            const dishId = e.target.value;
+            if (dishId) {
+              createAssignment(dishId, { weekIndex, dayIndex, mealType });
+            }
+          }}
+          className="w-full cursor-pointer rounded-md border border-dashed border-slate-300 bg-white px-2 py-1.5 text-xs text-slate-500 outline-none focus:border-slate-400"
+          aria-label={`Додати страву: ${MEAL_LABELS[mealType]}`}
+        >
+          <option value="" disabled>
+            + Додати…
+          </option>
+          {options.map((d) => (
+            <option key={d.id} value={d.id}>
+              {d.name}
+            </option>
+          ))}
+        </select>
       </div>
     </div>
   );

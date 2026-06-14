@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
-import { useDroppable } from "@dnd-kit/core";
 import { Search } from "lucide-react";
 import { ALL_TAGS, type Dish, type DishTag } from "../types";
-import { BACKLOG_DROP_ID } from "../lib/dnd";
 import { usePlanner } from "../store";
 import { AddDishForm } from "./AddDishForm";
 import { BacklogDishCard } from "./BacklogDishCard";
@@ -14,8 +12,6 @@ export function Backlog() {
   const [query, setQuery] = useState("");
   const [activeTags, setActiveTags] = useState<DishTag[]>([]);
   const [editing, setEditing] = useState<Dish | null>(null);
-
-  const { setNodeRef, isOver } = useDroppable({ id: BACKLOG_DROP_ID });
 
   const toggleTag = (t: DishTag) =>
     setActiveTags((prev) =>
@@ -29,16 +25,11 @@ export function Backlog() {
       .filter((d) =>
         activeTags.length ? activeTags.every((t) => d.tags.includes(t)) : true,
       )
-      .sort((a, b) => a.name.localeCompare(b.name, "ru"));
+      .sort((a, b) => a.name.localeCompare(b.name, "uk"));
   }, [dishes, query, activeTags]);
 
   return (
-    <div
-      ref={setNodeRef}
-      className={`flex h-full flex-col gap-3 rounded-lg p-1 transition ${
-        isOver ? "bg-rose-50 ring-2 ring-rose-200" : ""
-      }`}
-    >
+    <div className="flex h-full flex-col gap-3 p-1">
       <AddDishForm editing={editing} onDone={() => setEditing(null)} />
 
       <div className="relative">
@@ -65,9 +56,8 @@ export function Backlog() {
         ))}
       </div>
 
-      <div className="flex items-center justify-between px-0.5 text-[11px] text-slate-400">
-        <span>Страв: {filtered.length}</span>
-        {isOver && <span className="text-rose-500">відпустіть, щоб прибрати</span>}
+      <div className="px-0.5 text-[11px] text-slate-400">
+        Каталог · страв: {filtered.length}
       </div>
 
       <div className="flex-1 space-y-1.5 overflow-y-auto pr-1">

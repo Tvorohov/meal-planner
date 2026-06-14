@@ -1,8 +1,5 @@
-import { useSortable } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
 import { AlertTriangle, X } from "lucide-react";
 import type { Assignment, Dish } from "../types";
-import { assignmentDragId } from "../lib/dnd";
 import { usePlanner } from "../store";
 import { useWarnings } from "../context";
 import { TagChip } from "./TagChip";
@@ -17,31 +14,10 @@ export function AssignmentCard({
   const removeAssignment = usePlanner((s) => s.removeAssignment);
   const warnings = useWarnings().get(assignment.id) ?? [];
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition,
-    isDragging,
-  } = useSortable({ id: assignmentDragId(assignment.id) });
-
-  const style = {
-    transform: CSS.Translate.toString(transform),
-    transition,
-    opacity: isDragging ? 0.4 : 1,
-  };
-
   if (!dish) return null;
 
   return (
-    <div
-      ref={setNodeRef}
-      style={style}
-      {...attributes}
-      {...listeners}
-      className="group relative cursor-grab touch-none rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-sm hover:border-slate-300 active:cursor-grabbing"
-    >
+    <div className="group relative rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs shadow-sm">
       <div className="flex items-start gap-1">
         {warnings.length > 0 && (
           <span
@@ -54,9 +30,8 @@ export function AssignmentCard({
         <span className="flex-1 leading-snug text-slate-700">{dish.name}</span>
         <button
           type="button"
-          onPointerDown={(e) => e.stopPropagation()}
           onClick={() => removeAssignment(assignment.id)}
-          className="shrink-0 rounded p-0.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-rose-500 group-hover:opacity-100"
+          className="shrink-0 rounded p-0.5 text-slate-400 transition hover:bg-slate-100 hover:text-rose-500 sm:text-slate-300 sm:opacity-0 sm:group-hover:opacity-100"
           aria-label="Прибрати страву"
         >
           <X size={13} />
