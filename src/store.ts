@@ -26,13 +26,7 @@ interface PlannerActions {
   removeLastWeek: () => void;
   setStartDate: (iso: string) => void;
   createAssignment: (dishId: string, slot: SlotRef) => void;
-  moveAssignment: (
-    assignmentId: string,
-    slot: SlotRef,
-    overAssignmentId?: string,
-  ) => void;
   removeAssignment: (assignmentId: string) => void;
-  importState: (state: PlannerState) => void;
   resetAll: () => void;
 }
 
@@ -93,44 +87,9 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
           return { assignments: [...s.assignments, a] };
         }),
 
-      moveAssignment: (assignmentId, slot, overAssignmentId) =>
-        set((s) => {
-          const assignments = s.assignments.map((a) => ({ ...a }));
-          const moved = assignments.find((a) => a.id === assignmentId);
-          if (!moved) return {};
-
-          moved.weekIndex = slot.weekIndex;
-          moved.dayIndex = slot.dayIndex;
-          moved.mealType = slot.mealType;
-
-          const items = assignments
-            .filter((a) => sameSlot(a, slot) && a.id !== assignmentId)
-            .sort((a, b) => a.order - b.order);
-
-          let at = items.length;
-          if (overAssignmentId) {
-            const i = items.findIndex((a) => a.id === overAssignmentId);
-            if (i >= 0) at = i;
-          }
-          items.splice(at, 0, moved);
-          items.forEach((a, i) => {
-            a.order = i;
-          });
-
-          return { assignments };
-        }),
-
       removeAssignment: (assignmentId) =>
         set((s) => ({
           assignments: s.assignments.filter((a) => a.id !== assignmentId),
-        })),
-
-      importState: (state) =>
-        set(() => ({
-          dishes: state.dishes,
-          assignments: state.assignments,
-          weeks: state.weeks,
-          startDate: state.startDate || toISODate(mondayOf(new Date())),
         })),
 
       resetAll: () => set(() => buildInitialState()),

@@ -1,14 +1,10 @@
-import { useRef } from "react";
 import {
   CalendarDays,
   CalendarPlus,
-  Download,
   Menu as MenuIcon,
   RotateCcw,
-  Upload,
   UtensilsCrossed,
 } from "lucide-react";
-import type { PlannerState } from "../types";
 import { usePlanner } from "../store";
 
 function ToolbarButton({
@@ -35,45 +31,8 @@ function ToolbarButton({
 export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
   const addWeek = usePlanner((s) => s.addWeek);
   const resetAll = usePlanner((s) => s.resetAll);
-  const importState = usePlanner((s) => s.importState);
   const startDate = usePlanner((s) => s.startDate);
   const setStartDate = usePlanner((s) => s.setStartDate);
-  const fileRef = useRef<HTMLInputElement>(null);
-
-  const handleExport = () => {
-    const { dishes, assignments, weeks, startDate } = usePlanner.getState();
-    const data: PlannerState = { dishes, assignments, weeks, startDate };
-    const blob = new Blob([JSON.stringify(data, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `meal-plan-${new Date().toISOString().slice(0, 10)}.json`;
-    a.click();
-    URL.revokeObjectURL(url);
-  };
-
-  const handleImportFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = "";
-    if (!file) return;
-    try {
-      const parsed = JSON.parse(await file.text()) as PlannerState;
-      if (
-        !parsed ||
-        typeof parsed !== "object" ||
-        typeof parsed.dishes !== "object" ||
-        !Array.isArray(parsed.assignments) ||
-        typeof parsed.weeks !== "number"
-      ) {
-        throw new Error("Невірний формат файлу");
-      }
-      importState(parsed);
-    } catch (err) {
-      alert(`Не вдалося імпортувати: ${(err as Error).message}`);
-    }
-  };
 
   const handleReset = () => {
     if (confirm("Скинути план до початкового стану? Поточні дані буде втрачено.")) {
@@ -108,16 +67,6 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
           label="Тиждень"
         />
         <ToolbarButton
-          onClick={handleExport}
-          icon={<Download size={14} />}
-          label="Експорт"
-        />
-        <ToolbarButton
-          onClick={() => fileRef.current?.click()}
-          icon={<Upload size={14} />}
-          label="Імпорт"
-        />
-        <ToolbarButton
           onClick={handleReset}
           icon={<RotateCcw size={14} />}
           label="Скинути"
@@ -131,14 +80,6 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
           Страви
         </button>
       </div>
-
-      <input
-        ref={fileRef}
-        type="file"
-        accept="application/json"
-        onChange={handleImportFile}
-        className="hidden"
-      />
     </header>
   );
 }
