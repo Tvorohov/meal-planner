@@ -49,7 +49,7 @@ export const ruleAdjacentCheatDinners: Rule = (assignments, dishes) =>
     "dinner",
     "cheat",
     "adjacent-cheat-dinner",
-    "Чит-ужины в соседние дни — лучше развести.",
+    "Чіт-вечері в сусідні дні — краще рознести.",
   );
 
 /** Two breakfasts on adjacent days both tagged `fish`. */
@@ -60,7 +60,7 @@ export const ruleAdjacentFishBreakfasts: Rule = (assignments, dishes) =>
     "breakfast",
     "fish",
     "adjacent-fish-breakfast",
-    "Рыбные завтраки два дня подряд.",
+    "Рибні сніданки два дні поспіль.",
   );
 
 /** Same dish on adjacent days in the same meal type. */
@@ -79,7 +79,7 @@ export const ruleSameDishAdjacent: Rule = (assignments, dishes) => {
       out.push({
         assignmentId: a.id,
         ruleId: "same-dish-adjacent",
-        message: `«${dishes[a.dishId]?.name ?? "Блюдо"}» в соседние дни.`,
+        message: `«${dishes[a.dishId]?.name ?? "Страва"}» у сусідні дні.`,
       });
     }
   }
@@ -108,7 +108,7 @@ export const ruleKidNeedsAdult: Rule = (assignments, dishes) => {
           out.push({
             assignmentId: a.id,
             ruleId: "kid-needs-adult",
-            message: "Детское блюдо без второго блюда для взрослых.",
+            message: "Дитяча страва без другої страви для дорослих.",
           });
         }
       }

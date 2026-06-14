@@ -36,12 +36,12 @@ export interface PlannerState {
   startDate: string; // local YYYY-MM-DD of week 0 / Monday
 }
 
-export const DAY_LABELS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"] as const;
+export const DAY_LABELS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Нд"] as const;
 
 export const MEAL_LABELS: Record<MealType, string> = {
-  breakfast: "Завтрак",
-  lunch: "Обед",
-  dinner: "Ужин",
+  breakfast: "Сніданок",
+  lunch: "Обід",
+  dinner: "Вечеря",
 };
 
 /** Day indexes treated as weekend (Сб, Вс). */
@@ -68,14 +68,14 @@ export const ALL_TAGS: DishTag[] = [
 ];
 
 export const TAG_META: Record<DishTag, { label: string; cls: string }> = {
-  cheat: { label: "чит", cls: "bg-orange-100 text-orange-700 border-orange-200" },
-  kid: { label: "ребёнок", cls: "bg-pink-100 text-pink-700 border-pink-200" },
-  fish: { label: "рыба", cls: "bg-blue-100 text-blue-700 border-blue-200" },
+  cheat: { label: "чіт", cls: "bg-orange-100 text-orange-700 border-orange-200" },
+  kid: { label: "дитяче", cls: "bg-pink-100 text-pink-700 border-pink-200" },
+  fish: { label: "риба", cls: "bg-blue-100 text-blue-700 border-blue-200" },
   seafood: { label: "морепр.", cls: "bg-cyan-100 text-cyan-700 border-cyan-200" },
-  chicken: { label: "курица", cls: "bg-amber-100 text-amber-700 border-amber-200" },
-  beef: { label: "говядина", cls: "bg-red-100 text-red-700 border-red-200" },
+  chicken: { label: "курка", cls: "bg-amber-100 text-amber-700 border-amber-200" },
+  beef: { label: "яловичина", cls: "bg-red-100 text-red-700 border-red-200" },
   pork: { label: "свинина", cls: "bg-rose-100 text-rose-700 border-rose-200" },
-  turkey: { label: "индейка", cls: "bg-yellow-100 text-yellow-700 border-yellow-200" },
+  turkey: { label: "індичка", cls: "bg-yellow-100 text-yellow-700 border-yellow-200" },
   veg: { label: "веган", cls: "bg-green-100 text-green-700 border-green-200" },
-  sweet: { label: "сладкое", cls: "bg-purple-100 text-purple-700 border-purple-200" },
+  sweet: { label: "солодке", cls: "bg-purple-100 text-purple-700 border-purple-200" },
 };

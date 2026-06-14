@@ -30,7 +30,7 @@ onto a trash zone) = remove that assignment. Repeats are intentional.
 ## 3. Data model
 
 See `src/types.ts`. `MealType`, `DishTag`, `Dish`, `Assignment`, `PlannerState`.
-Day labels (Monday first): `["Пн","Вт","Ср","Чт","Пт","Сб","Вс"]`.
+Day labels (Monday first): `["Пн","Вт","Ср","Чт","Пт","Сб","Нд"]`.
 
 ## 4. Features
 
@@ -58,7 +58,7 @@ in `src/validation.ts`. Checks run over the full timeline, including week bounda
 
 Desktop: top toolbar; left backlog (~280px); main area = vertical stack of weeks, each a
 7-column grid with breakfast + dinner per day. Mobile: weeks stack as cards; backlog is a
-bottom sheet opened with a "Блюда" button.
+bottom sheet opened with a "Страви" button.
 
 ## 7. File structure
 

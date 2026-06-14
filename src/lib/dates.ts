@@ -34,7 +34,7 @@ export function dateOf(startISO: string, weekIndex: number, dayIndex: number): D
   return addDays(parseISODate(startISO), weekIndex * 7 + dayIndex);
 }
 
-const shortFmt = new Intl.DateTimeFormat("ru-RU", {
+const shortFmt = new Intl.DateTimeFormat("uk-UA", {
   day: "numeric",
   month: "short",
 });

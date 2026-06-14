@@ -2,57 +2,45 @@ import type { Assignment, Dish, MealType, PlannerState } from "./types";
 import { newId } from "./lib/ids";
 import { mondayOf, toISODate } from "./lib/dates";
 
-/**
- * Old dish name -> corrected name. Used by the store's persist migration so
- * existing saved plans pick up grammar fixes without losing assignments.
- */
-export const DISH_RENAMES: Record<string, string> = {
-  "Сэндвич с тюркей-беконом и яйцом": "Сэндвич с беконом из индейки и яйцом",
-  "Яичница с белком и салатом": "Белковая яичница с салатом",
-  "Куриные бедра в азиатском соусе": "Куриные бёдра в азиатском соусе",
-  "Куриные бедра барбекю": "Куриные бёдра барбекю",
-};
-
 export const seedDishes: Omit<Dish, "id">[] = [
   // breakfasts
-  { name: "Сэндвич с беконом из индейки и яйцом", mealTypes: ["breakfast"], tags: [] },
-  { name: "Сырники", mealTypes: ["breakfast"], tags: ["sweet"] },
-  { name: "Овсянка с грибами", mealTypes: ["breakfast"], tags: ["veg"] },
-  { name: "Тост с тунцом", mealTypes: ["breakfast"], tags: ["fish"] },
-  { name: "Тост с сардинами", mealTypes: ["breakfast"], tags: ["fish"] },
-  { name: "Белковая яичница с салатом", mealTypes: ["breakfast"], tags: [] },
-  { name: "Блинчики с начинкой и сладкие", mealTypes: ["breakfast"], tags: ["sweet"] },
+  { name: "Сендвіч з беконом з індички та яйцем", mealTypes: ["breakfast"], tags: [] },
+  { name: "Сирники", mealTypes: ["breakfast"], tags: ["sweet"] },
+  { name: "Вівсянка з грибами", mealTypes: ["breakfast"], tags: ["veg"] },
+  { name: "Тост з тунцем", mealTypes: ["breakfast"], tags: ["fish"] },
+  { name: "Тост із сардинами", mealTypes: ["breakfast"], tags: ["fish"] },
+  { name: "Білкова яєчня із салатом", mealTypes: ["breakfast"], tags: [] },
+  { name: "Млинці з начинкою та солодкі", mealTypes: ["breakfast"], tags: ["sweet"] },
   { name: "Шакшука", mealTypes: ["breakfast"], tags: [] },
-  { name: "Оладьи", mealTypes: ["breakfast"], tags: ["sweet", "kid"] },
-  { name: "Тост с лососем", mealTypes: ["breakfast"], tags: ["fish"] },
+  { name: "Оладки", mealTypes: ["breakfast"], tags: ["sweet", "kid"] },
+  { name: "Тост із лососем", mealTypes: ["breakfast"], tags: ["fish"] },
 
-  // dinners
-  { name: "Куриные котлеты, гарнир, салат", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
-  { name: "Митболы, гарнир, салат", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
-  { name: "Азиатская лапша", mealTypes: ["dinner", "lunch"], tags: [] },
+  // dinners (also valid for weekend lunch)
+  { name: "Курячі котлети, гарнір, салат", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Мітболи, гарнір, салат", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
+  { name: "Азійська локшина", mealTypes: ["dinner", "lunch"], tags: [] },
   { name: "Тако", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
   {
-    name: "Паста с креветками, брокколи и вялеными томатами",
+    name: "Паста з креветками, броколі та в'яленими томатами",
     mealTypes: ["dinner", "lunch"],
     tags: ["seafood"],
   },
-  { name: "Паста болоньезе", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
-  { name: "Куриные бёдра в азиатском соусе", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
-  { name: "Куриные бёдра барбекю", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
-  { name: "Курица по-французски", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
-  { name: "Биточки", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
-  { name: "Индейка", mealTypes: ["dinner", "lunch"], tags: ["turkey"] },
+  { name: "Паста болоньєзе", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
+  { name: "Курячі стегна в азійському соусі", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Курячі стегна барбекю", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Курка по-французьки", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Битки", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
+  { name: "Індичка", mealTypes: ["dinner", "lunch"], tags: ["turkey"] },
   { name: "Сосиски барбекю", mealTypes: ["dinner", "lunch"], tags: ["cheat", "pork"] },
-  { name: "Бургеры", mealTypes: ["dinner", "lunch"], tags: ["cheat", "beef"] },
-  { name: "Наггетсы с лососем", mealTypes: ["dinner", "lunch"], tags: ["kid", "fish"] },
-  { name: "Запечённый лосось в боуле", mealTypes: ["dinner", "lunch"], tags: ["fish"] },
-  { name: "Пицца", mealTypes: ["dinner", "lunch"], tags: ["cheat"] },
+  { name: "Бургери", mealTypes: ["dinner", "lunch"], tags: ["cheat", "beef"] },
+  { name: "Нагетси з лососем", mealTypes: ["dinner", "lunch"], tags: ["kid", "fish"] },
+  { name: "Запечений лосось у боулі", mealTypes: ["dinner", "lunch"], tags: ["fish"] },
+  { name: "Піца", mealTypes: ["dinner", "lunch"], tags: ["cheat"] },
 ];
 
 /**
- * A clean, agreed 2-week plan (no validation warnings) so the grid is not
- * empty on first run. Each entry is [dayIndex, breakfast name, dinner name].
- * Day 0 = Monday.
+ * A clean sample 2-week plan (no validation warnings) so the grid is not empty
+ * on first run. Day 0 = Monday. Lunch entries are filled only on weekends.
  */
 const SAMPLE_PLAN: Array<{
   week: number;
@@ -63,34 +51,34 @@ const SAMPLE_PLAN: Array<{
   {
     week: 0,
     breakfasts: [
-      "Сэндвич с беконом из индейки и яйцом",
-      "Сырники",
-      "Тост с тунцом",
-      "Овсянка с грибами",
+      "Сендвіч з беконом з індички та яйцем",
+      "Сирники",
+      "Тост з тунцем",
+      "Вівсянка з грибами",
       "Шакшука",
-      "Оладьи",
-      "Белковая яичница с салатом",
+      "Оладки",
+      "Білкова яєчня із салатом",
     ],
-    lunches: ["", "", "", "", "", "Куриные бёдра барбекю", "Биточки"],
+    lunches: ["", "", "", "", "", "Курячі стегна барбекю", "Битки"],
     dinners: [
-      "Куриные котлеты, гарнир, салат",
-      "Паста болоньезе",
-      "Пицца",
-      "Азиатская лапша",
-      "Митболы, гарнир, салат",
-      "Бургеры",
-      "Куриные бёдра в азиатском соусе",
+      "Курячі котлети, гарнір, салат",
+      "Паста болоньєзе",
+      "Піца",
+      "Азійська локшина",
+      "Мітболи, гарнір, салат",
+      "Бургери",
+      "Курячі стегна в азійському соусі",
     ],
   },
   {
     week: 1,
     breakfasts: [
-      "Тост с лососем",
-      "Блинчики с начинкой и сладкие",
-      "Сэндвич с беконом из индейки и яйцом",
-      "Тост с сардинами",
-      "Овсянка с грибами",
-      "Сырники",
+      "Тост із лососем",
+      "Млинці з начинкою та солодкі",
+      "Сендвіч з беконом з індички та яйцем",
+      "Тост із сардинами",
+      "Вівсянка з грибами",
+      "Сирники",
       "Шакшука",
     ],
     lunches: [
@@ -99,17 +87,17 @@ const SAMPLE_PLAN: Array<{
       "",
       "",
       "",
-      "Куриные котлеты, гарнир, салат",
-      "Митболы, гарнир, салат",
+      "Курячі котлети, гарнір, салат",
+      "Мітболи, гарнір, салат",
     ],
     dinners: [
       "Тако",
-      "Паста с креветками, брокколи и вялеными томатами",
-      "Курица по-французски",
+      "Паста з креветками, броколі та в'яленими томатами",
+      "Курка по-французьки",
       "Сосиски барбекю",
-      "Индейка",
-      "Запечённый лосось в боуле",
-      "Биточки",
+      "Індичка",
+      "Запечений лосось у боулі",
+      "Битки",
     ],
   },
 ];
@@ -144,8 +132,8 @@ function buildSamplePlan(idByName: Record<string, string>): Assignment[] {
 
   // Demonstrate two assignments in one slot: a kid dish next to the adult one.
   // (Also keeps the "kid dish needs an adult dish" rule satisfied in the seed.)
-  place(0, 6, "dinner", "Наггетсы с лососем", 1);
-  place(0, 5, "breakfast", "Сэндвич с беконом из индейки и яйцом", 1);
+  place(0, 6, "dinner", "Нагетси з лососем", 1);
+  place(0, 5, "breakfast", "Сендвіч з беконом з індички та яйцем", 1);
 
   return assignments;
 }

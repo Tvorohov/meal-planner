@@ -80,13 +80,13 @@ export function AddDishForm({
       className="space-y-2 rounded-lg border border-slate-200 bg-slate-50 p-2"
     >
       <div className="text-xs font-semibold text-slate-500">
-        {editing ? "Редактировать блюдо" : "Новое блюдо"}
+        {editing ? "Редагувати страву" : "Нова страва"}
       </div>
 
       <input
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="Название блюда"
+        placeholder="Назва страви"
         className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-sm outline-none focus:border-slate-400"
       />
 
@@ -121,7 +121,7 @@ export function AddDishForm({
       <input
         value={notes}
         onChange={(e) => setNotes(e.target.value)}
-        placeholder="Заметка (необязательно)"
+        placeholder="Нотатка (необов'язково)"
         className="w-full rounded-md border border-slate-200 px-2 py-1.5 text-xs outline-none focus:border-slate-400"
       />
 
@@ -130,7 +130,7 @@ export function AddDishForm({
           type="submit"
           className="inline-flex flex-1 items-center justify-center gap-1 rounded-md bg-slate-800 px-2 py-1.5 text-xs font-medium text-white transition hover:bg-slate-700"
         >
-          <Check size={13} /> {editing ? "Сохранить" : "Добавить"}
+          <Check size={13} /> {editing ? "Зберегти" : "Додати"}
         </button>
         {editing && (
           <button
@@ -141,7 +141,7 @@ export function AddDishForm({
             }}
             className="inline-flex items-center justify-center gap-1 rounded-md border border-slate-200 px-2 py-1.5 text-xs text-slate-500 transition hover:bg-white"
           >
-            <X size={13} /> Отмена
+            <X size={13} /> Скасувати
           </button>
         )}
       </div>

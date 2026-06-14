@@ -67,16 +67,16 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
         !Array.isArray(parsed.assignments) ||
         typeof parsed.weeks !== "number"
       ) {
-        throw new Error("Неверный формат файла");
+        throw new Error("Невірний формат файлу");
       }
       importState(parsed);
     } catch (err) {
-      alert(`Не удалось импортировать: ${(err as Error).message}`);
+      alert(`Не вдалося імпортувати: ${(err as Error).message}`);
     }
   };
 
   const handleReset = () => {
-    if (confirm("Сбросить план к начальному состоянию? Текущие данные будут потеряны.")) {
+    if (confirm("Скинути план до початкового стану? Поточні дані буде втрачено.")) {
       resetAll();
     }
   };
@@ -85,13 +85,13 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
     <header className="sticky top-0 z-30 flex flex-wrap items-center gap-2 border-b border-slate-200 bg-white/90 px-3 py-2 backdrop-blur">
       <div className="flex items-center gap-2 font-semibold text-slate-700">
         <UtensilsCrossed size={18} className="text-emerald-600" />
-        <span>Планировщик меню</span>
+        <span>Планувальник меню</span>
       </div>
 
       <div className="ml-auto flex flex-wrap items-center gap-2">
         <label
           className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2 py-1.5 text-xs text-slate-500"
-          title="Понедельник первой недели"
+          title="Понеділок першого тижня"
         >
           <CalendarDays size={14} className="text-slate-400" />
           <span className="hidden md:inline">Старт</span>
@@ -105,22 +105,22 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
         <ToolbarButton
           onClick={addWeek}
           icon={<CalendarPlus size={14} />}
-          label="Неделя"
+          label="Тиждень"
         />
         <ToolbarButton
           onClick={handleExport}
           icon={<Download size={14} />}
-          label="Экспорт"
+          label="Експорт"
         />
         <ToolbarButton
           onClick={() => fileRef.current?.click()}
           icon={<Upload size={14} />}
-          label="Импорт"
+          label="Імпорт"
         />
         <ToolbarButton
           onClick={handleReset}
           icon={<RotateCcw size={14} />}
-          label="Сброс"
+          label="Скинути"
         />
         <button
           type="button"
@@ -128,7 +128,7 @@ export function Toolbar({ onOpenBacklog }: { onOpenBacklog: () => void }) {
           className="inline-flex items-center gap-1.5 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-medium text-slate-600 transition hover:bg-slate-50 lg:hidden"
         >
           <MenuIcon size={14} />
-          Блюда
+          Страви
         </button>
       </div>
 

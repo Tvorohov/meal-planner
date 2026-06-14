@@ -57,7 +57,7 @@ export function AssignmentCard({
           onPointerDown={(e) => e.stopPropagation()}
           onClick={() => removeAssignment(assignment.id)}
           className="shrink-0 rounded p-0.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-rose-500 group-hover:opacity-100"
-          aria-label="Убрать блюдо"
+          aria-label="Прибрати страву"
         >
           <X size={13} />
         </button>

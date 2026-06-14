@@ -58,7 +58,7 @@ export function MealSlot({
 
         {items.length === 0 && (
           <div className="flex h-9 items-center justify-center text-[10px] text-slate-300">
-            перетащите сюда
+            перетягніть сюди
           </div>
         )}
       </div>

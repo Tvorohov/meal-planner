@@ -143,7 +143,7 @@ export default function App() {
               >
                 <div className="mb-2 flex items-center justify-between lg:hidden">
                   <span className="text-sm font-semibold text-slate-600">
-                    Блюда
+                    Страви
                   </span>
                   <button
                     type="button"

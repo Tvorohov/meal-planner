@@ -2,7 +2,7 @@ import { create } from "zustand";
 import { persist } from "zustand/middleware";
 import type { Assignment, Dish, DishTag, MealType, PlannerState } from "./types";
 import { newId } from "./lib/ids";
-import { buildInitialState, DISH_RENAMES } from "./seed";
+import { buildInitialState } from "./seed";
 import { mondayOf, parseISODate, toISODate } from "./lib/dates";
 
 export interface SlotRef {
@@ -135,41 +135,8 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
 
       resetAll: () => set(() => buildInitialState()),
     }),
-    {
-      name: "meal-planner-v1",
-      version: 3,
-      // Bring older saved plans up to date without losing assignments.
-      migrate: (persisted, version) => {
-        const state = persisted as Partial<PlannerState> | undefined;
-        if (!state) return persisted as PlannerState;
-        // v2: dish-name grammar fixes + calendar start date.
-        if (version < 2) {
-          if (state.dishes) {
-            for (const id of Object.keys(state.dishes)) {
-              const dish = state.dishes[id];
-              const renamed = DISH_RENAMES[dish.name];
-              if (renamed) dish.name = renamed;
-            }
-          }
-          if (!state.startDate) {
-            state.startDate = toISODate(mondayOf(new Date()));
-          }
-        }
-        // v3: weekend lunches reuse dinner dishes, so make every
-        // dinner-capable dish available for lunch too.
-        if (version < 3 && state.dishes) {
-          for (const id of Object.keys(state.dishes)) {
-            const dish = state.dishes[id];
-            if (
-              dish.mealTypes.includes("dinner") &&
-              !dish.mealTypes.includes("lunch")
-            ) {
-              dish.mealTypes = [...dish.mealTypes, "lunch"];
-            }
-          }
-        }
-        return state as PlannerState;
-      },
-    },
+    // New storage key for the Ukrainian catalog; any older (Russian) saved
+    // state under the previous key is intentionally not migrated.
+    { name: "meal-planner-uk", version: 1 },
   ),
 );

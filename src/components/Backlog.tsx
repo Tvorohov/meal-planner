@@ -49,7 +49,7 @@ export function Backlog() {
         <input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder="Поиск блюда"
+          placeholder="Пошук страви"
           className="w-full rounded-md border border-slate-200 py-1.5 pl-7 pr-2 text-sm outline-none focus:border-slate-400"
         />
       </div>
@@ -66,8 +66,8 @@ export function Backlog() {
       </div>
 
       <div className="flex items-center justify-between px-0.5 text-[11px] text-slate-400">
-        <span>Блюд: {filtered.length}</span>
-        {isOver && <span className="text-rose-500">отпустите, чтобы убрать</span>}
+        <span>Страв: {filtered.length}</span>
+        {isOver && <span className="text-rose-500">відпустіть, щоб прибрати</span>}
       </div>
 
       <div className="flex-1 space-y-1.5 overflow-y-auto pr-1">
@@ -76,7 +76,7 @@ export function Backlog() {
         ))}
         {filtered.length === 0 && (
           <div className="px-1 py-4 text-center text-xs text-slate-400">
-            Ничего не найдено
+            Нічого не знайдено
           </div>
         )}
       </div>

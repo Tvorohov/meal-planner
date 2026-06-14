@@ -18,7 +18,7 @@ export function TrashZone({ visible }: { visible: boolean }) {
       }`}
     >
       <Trash2 size={16} />
-      Убрать из плана
+      Прибрати з плану
     </div>
   );
 }

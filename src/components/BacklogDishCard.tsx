@@ -24,8 +24,8 @@ export function BacklogDishCard({
     const inUse = assignments.filter((a) => a.dishId === dish.id).length;
     const msg =
       inUse > 0
-        ? `«${dish.name}» используется ${inUse} раз(а) в плане. Удалить блюдо и все его размещения?`
-        : `Удалить «${dish.name}»?`;
+        ? `«${dish.name}» використовується ${inUse} раз(ів) у плані. Видалити страву та всі її розміщення?`
+        : `Видалити «${dish.name}»?`;
     if (confirm(msg)) deleteDish(dish.id);
   };
 
@@ -45,7 +45,7 @@ export function BacklogDishCard({
           onPointerDown={(e) => e.stopPropagation()}
           onClick={onEdit}
           className="shrink-0 rounded p-0.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-slate-600 group-hover:opacity-100"
-          aria-label="Редактировать"
+          aria-label="Редагувати"
         >
           <Pencil size={12} />
         </button>
@@ -54,7 +54,7 @@ export function BacklogDishCard({
           onPointerDown={(e) => e.stopPropagation()}
           onClick={handleDelete}
           className="shrink-0 rounded p-0.5 text-slate-300 opacity-0 transition hover:bg-slate-100 hover:text-rose-500 group-hover:opacity-100"
-          aria-label="Удалить"
+          aria-label="Видалити"
         >
           <Trash2 size={12} />
         </button>

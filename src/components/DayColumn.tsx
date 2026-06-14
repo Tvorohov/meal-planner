@@ -39,7 +39,7 @@ export function DayColumn({
         </div>
         <div className={`text-[10px] ${today ? "text-emerald-500" : "text-slate-400"}`}>
           {formatShort(date)}
-          {today && " · сегодня"}
+          {today && " · сьогодні"}
         </div>
       </div>
       {meals.map((meal) => (

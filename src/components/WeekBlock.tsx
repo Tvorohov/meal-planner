@@ -22,7 +22,7 @@ export function WeekBlock({
     <section className="space-y-2">
       <div className="flex items-center justify-between">
         <h2 className="text-sm font-semibold text-slate-500">
-          Неделя {weekIndex + 1}
+          Тиждень {weekIndex + 1}
           <span className="ml-2 font-normal text-slate-400">
             {formatWeekRange(startDate, weekIndex)}
           </span>
@@ -33,7 +33,7 @@ export function WeekBlock({
             onClick={onRemove}
             className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
           >
-            <Trash2 size={13} /> Убрать неделю
+            <Trash2 size={13} /> Прибрати тиждень
           </button>
         )}
       </div>
