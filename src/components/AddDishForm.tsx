@@ -10,7 +10,7 @@ import {
 import { usePlanner, type DishInput } from "../store";
 import { TagChip } from "./TagChip";
 
-const MEALS: MealType[] = ["breakfast", "dinner"];
+const MEALS: MealType[] = ["breakfast", "lunch", "dinner"];
 
 export function AddDishForm({
   editing,

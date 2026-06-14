@@ -1,5 +1,5 @@
 import type { Assignment, Dish } from "../types";
-import { DAY_LABELS } from "../types";
+import { DAY_LABELS, mealsForDay } from "../types";
 import { dateOf, formatShort, isSameDay } from "../lib/dates";
 import { MealSlot } from "./MealSlot";
 
@@ -19,11 +19,9 @@ export function DayColumn({
   const forDay = assignments.filter(
     (a) => a.weekIndex === weekIndex && a.dayIndex === dayIndex,
   );
-  const breakfast = forDay.filter((a) => a.mealType === "breakfast");
-  const dinner = forDay.filter((a) => a.mealType === "dinner");
-
   const date = dateOf(startDate, weekIndex, dayIndex);
   const today = isSameDay(date, new Date());
+  const meals = mealsForDay(dayIndex);
 
   return (
     <div
@@ -44,20 +42,16 @@ export function DayColumn({
           {today && " · сегодня"}
         </div>
       </div>
-      <MealSlot
-        weekIndex={weekIndex}
-        dayIndex={dayIndex}
-        mealType="breakfast"
-        assignments={breakfast}
-        dishes={dishes}
-      />
-      <MealSlot
-        weekIndex={weekIndex}
-        dayIndex={dayIndex}
-        mealType="dinner"
-        assignments={dinner}
-        dishes={dishes}
-      />
+      {meals.map((meal) => (
+        <MealSlot
+          key={meal}
+          weekIndex={weekIndex}
+          dayIndex={dayIndex}
+          mealType={meal}
+          assignments={forDay.filter((a) => a.mealType === meal)}
+          dishes={dishes}
+        />
+      ))}
     </div>
   );
 }

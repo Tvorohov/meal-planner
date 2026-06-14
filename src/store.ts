@@ -137,12 +137,12 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
     }),
     {
       name: "meal-planner-v1",
-      version: 2,
-      // Bring older saved plans up to date: apply dish-name grammar fixes
-      // and backfill the calendar start date.
+      version: 3,
+      // Bring older saved plans up to date without losing assignments.
       migrate: (persisted, version) => {
         const state = persisted as Partial<PlannerState> | undefined;
         if (!state) return persisted as PlannerState;
+        // v2: dish-name grammar fixes + calendar start date.
         if (version < 2) {
           if (state.dishes) {
             for (const id of Object.keys(state.dishes)) {
@@ -153,6 +153,19 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
           }
           if (!state.startDate) {
             state.startDate = toISODate(mondayOf(new Date()));
+          }
+        }
+        // v3: weekend lunches reuse dinner dishes, so make every
+        // dinner-capable dish available for lunch too.
+        if (version < 3 && state.dishes) {
+          for (const id of Object.keys(state.dishes)) {
+            const dish = state.dishes[id];
+            if (
+              dish.mealTypes.includes("dinner") &&
+              !dish.mealTypes.includes("lunch")
+            ) {
+              dish.mealTypes = [...dish.mealTypes, "lunch"];
+            }
           }
         }
         return state as PlannerState;

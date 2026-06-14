@@ -1,4 +1,4 @@
-export type MealType = "breakfast" | "dinner";
+export type MealType = "breakfast" | "lunch" | "dinner";
 
 export type DishTag =
   | "cheat" // pizza, burgers, bbq sausages
@@ -40,8 +40,19 @@ export const DAY_LABELS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс
 
 export const MEAL_LABELS: Record<MealType, string> = {
   breakfast: "Завтрак",
+  lunch: "Обед",
   dinner: "Ужин",
 };
+
+/** Day indexes treated as weekend (Сб, Вс). */
+export const WEEKEND_DAYS = [5, 6];
+
+/** Which meal slots a given day shows. Lunch only on weekends. */
+export function mealsForDay(dayIndex: number): MealType[] {
+  return WEEKEND_DAYS.includes(dayIndex)
+    ? ["breakfast", "lunch", "dinner"]
+    : ["breakfast", "dinner"];
+}
 
 export const ALL_TAGS: DishTag[] = [
   "cheat",

@@ -86,11 +86,43 @@ export const ruleSameDishAdjacent: Rule = (assignments, dishes) => {
   return out;
 };
 
+/** A slot with a kid dish should also have a non-kid (adult) dish. */
+export const ruleKidNeedsAdult: Rule = (assignments, dishes) => {
+  const bySlot = new Map<string, Assignment[]>();
+  for (const a of assignments) {
+    const key = `${a.weekIndex}:${a.dayIndex}:${a.mealType}`;
+    const arr = bySlot.get(key);
+    if (arr) arr.push(a);
+    else bySlot.set(key, [a]);
+  }
+
+  const out: Warning[] = [];
+  for (const items of bySlot.values()) {
+    const hasKid = items.some((a) => hasTag(dishes, a, "kid"));
+    const hasAdult = items.some(
+      (a) => dishes[a.dishId] && !hasTag(dishes, a, "kid"),
+    );
+    if (hasKid && !hasAdult) {
+      for (const a of items) {
+        if (hasTag(dishes, a, "kid")) {
+          out.push({
+            assignmentId: a.id,
+            ruleId: "kid-needs-adult",
+            message: "Детское блюдо без второго блюда для взрослых.",
+          });
+        }
+      }
+    }
+  }
+  return out;
+};
+
 /** Register rules here. Comment one out to turn it off. */
 const RULES: Rule[] = [
   ruleAdjacentCheatDinners,
   ruleAdjacentFishBreakfasts,
   ruleSameDishAdjacent,
+  ruleKidNeedsAdult,
 ];
 
 /** Run every rule and group warnings by assignment id. */

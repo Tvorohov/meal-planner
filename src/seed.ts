@@ -27,26 +27,26 @@ export const seedDishes: Omit<Dish, "id">[] = [
   { name: "Тост с лососем", mealTypes: ["breakfast"], tags: ["fish"] },
 
   // dinners
-  { name: "Куриные котлеты, гарнир, салат", mealTypes: ["dinner"], tags: ["chicken"] },
-  { name: "Митболы, гарнир, салат", mealTypes: ["dinner"], tags: ["beef"] },
-  { name: "Азиатская лапша", mealTypes: ["dinner"], tags: [] },
-  { name: "Тако", mealTypes: ["dinner"], tags: ["beef"] },
+  { name: "Куриные котлеты, гарнир, салат", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Митболы, гарнир, салат", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
+  { name: "Азиатская лапша", mealTypes: ["dinner", "lunch"], tags: [] },
+  { name: "Тако", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
   {
     name: "Паста с креветками, брокколи и вялеными томатами",
-    mealTypes: ["dinner"],
+    mealTypes: ["dinner", "lunch"],
     tags: ["seafood"],
   },
-  { name: "Паста болоньезе", mealTypes: ["dinner"], tags: ["beef"] },
-  { name: "Куриные бёдра в азиатском соусе", mealTypes: ["dinner"], tags: ["chicken"] },
-  { name: "Куриные бёдра барбекю", mealTypes: ["dinner"], tags: ["chicken"] },
-  { name: "Курица по-французски", mealTypes: ["dinner"], tags: ["chicken"] },
-  { name: "Биточки", mealTypes: ["dinner"], tags: ["beef"] },
-  { name: "Индейка", mealTypes: ["dinner"], tags: ["turkey"] },
-  { name: "Сосиски барбекю", mealTypes: ["dinner"], tags: ["cheat", "pork"] },
-  { name: "Бургеры", mealTypes: ["dinner"], tags: ["cheat", "beef"] },
-  { name: "Наггетсы с лососем", mealTypes: ["dinner"], tags: ["kid", "fish"] },
-  { name: "Запечённый лосось в боуле", mealTypes: ["dinner"], tags: ["fish"] },
-  { name: "Пицца", mealTypes: ["dinner"], tags: ["cheat"] },
+  { name: "Паста болоньезе", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
+  { name: "Куриные бёдра в азиатском соусе", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Куриные бёдра барбекю", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Курица по-французски", mealTypes: ["dinner", "lunch"], tags: ["chicken"] },
+  { name: "Биточки", mealTypes: ["dinner", "lunch"], tags: ["beef"] },
+  { name: "Индейка", mealTypes: ["dinner", "lunch"], tags: ["turkey"] },
+  { name: "Сосиски барбекю", mealTypes: ["dinner", "lunch"], tags: ["cheat", "pork"] },
+  { name: "Бургеры", mealTypes: ["dinner", "lunch"], tags: ["cheat", "beef"] },
+  { name: "Наггетсы с лососем", mealTypes: ["dinner", "lunch"], tags: ["kid", "fish"] },
+  { name: "Запечённый лосось в боуле", mealTypes: ["dinner", "lunch"], tags: ["fish"] },
+  { name: "Пицца", mealTypes: ["dinner", "lunch"], tags: ["cheat"] },
 ];
 
 /**
@@ -57,6 +57,7 @@ export const seedDishes: Omit<Dish, "id">[] = [
 const SAMPLE_PLAN: Array<{
   week: number;
   breakfasts: string[]; // 7, Monday..Sunday
+  lunches: string[]; // 7, Monday..Sunday; only weekend entries are filled
   dinners: string[]; // 7, Monday..Sunday
 }> = [
   {
@@ -70,6 +71,7 @@ const SAMPLE_PLAN: Array<{
       "Оладьи",
       "Белковая яичница с салатом",
     ],
+    lunches: ["", "", "", "", "", "Куриные бёдра барбекю", "Биточки"],
     dinners: [
       "Куриные котлеты, гарнир, салат",
       "Паста болоньезе",
@@ -85,11 +87,20 @@ const SAMPLE_PLAN: Array<{
     breakfasts: [
       "Тост с лососем",
       "Блинчики с начинкой и сладкие",
-      "Сэндвич с тюркей-беконом и яйцом",
+      "Сэндвич с беконом из индейки и яйцом",
       "Тост с сардинами",
       "Овсянка с грибами",
       "Сырники",
       "Шакшука",
+    ],
+    lunches: [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "Куриные котлеты, гарнир, салат",
+      "Митболы, гарнир, салат",
     ],
     dinners: [
       "Тако",
@@ -127,11 +138,14 @@ function buildSamplePlan(idByName: Record<string, string>): Assignment[] {
 
   for (const wk of SAMPLE_PLAN) {
     wk.breakfasts.forEach((name, day) => place(wk.week, day, "breakfast", name, 0));
+    wk.lunches.forEach((name, day) => place(wk.week, day, "lunch", name, 0));
     wk.dinners.forEach((name, day) => place(wk.week, day, "dinner", name, 0));
   }
 
   // Demonstrate two assignments in one slot: a kid dish next to the adult one.
+  // (Also keeps the "kid dish needs an adult dish" rule satisfied in the seed.)
   place(0, 6, "dinner", "Наггетсы с лососем", 1);
+  place(0, 5, "breakfast", "Сэндвич с беконом из индейки и яйцом", 1);
 
   return assignments;
 }
