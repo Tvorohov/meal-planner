@@ -12,13 +12,34 @@ export type DishTag =
   | "veg"
   | "sweet";
 
+export interface Ingredient {
+  name: string;
+  quantity: number; // 0 = unspecified / "до смаку"
+  unit: string; // г, кг, мл, л, шт, ст. л., ч. л., зубчик, пучок, до смаку
+}
+
 export interface Dish {
   id: string;
   name: string;
   mealTypes: MealType[]; // where it can be placed
   tags: DishTag[];
+  ingredients: Ingredient[];
   notes?: string;
 }
+
+/** Suggested units for the ingredient editor (free text is still allowed). */
+export const UNIT_OPTIONS = [
+  "г",
+  "кг",
+  "мл",
+  "л",
+  "шт",
+  "ст. л.",
+  "ч. л.",
+  "зубчик",
+  "пучок",
+  "до смаку",
+];
 
 export interface Assignment {
   id: string; // unique per placement

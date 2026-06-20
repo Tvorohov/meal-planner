@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { Check, X } from "lucide-react";
+import { Check, Plus, Trash2, X } from "lucide-react";
 import {
   ALL_TAGS,
   MEAL_LABELS,
+  UNIT_OPTIONS,
   type Dish,
   type DishTag,
+  type Ingredient,
   type MealType,
 } from "../types";
 import { usePlanner, type DishInput } from "../store";
@@ -25,6 +27,7 @@ export function AddDishForm({
   const [name, setName] = useState("");
   const [mealTypes, setMealTypes] = useState<MealType[]>(["dinner"]);
   const [tags, setTags] = useState<DishTag[]>([]);
+  const [ingredients, setIngredients] = useState<Ingredient[]>([]);
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
@@ -32,6 +35,7 @@ export function AddDishForm({
       setName(editing.name);
       setMealTypes(editing.mealTypes);
       setTags(editing.tags);
+      setIngredients(editing.ingredients.map((i) => ({ ...i })));
       setNotes(editing.notes ?? "");
     }
   }, [editing]);
@@ -46,10 +50,18 @@ export function AddDishForm({
       prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t],
     );
 
+  const addRow = () =>
+    setIngredients((p) => [...p, { name: "", quantity: 0, unit: "г" }]);
+  const updateRow = (i: number, patch: Partial<Ingredient>) =>
+    setIngredients((p) => p.map((r, idx) => (idx === i ? { ...r, ...patch } : r)));
+  const removeRow = (i: number) =>
+    setIngredients((p) => p.filter((_, idx) => idx !== i));
+
   const reset = () => {
     setName("");
     setMealTypes(["dinner"]);
     setTags([]);
+    setIngredients([]);
     setNotes("");
   };
 
@@ -62,6 +74,13 @@ export function AddDishForm({
       name: trimmed,
       mealTypes,
       tags,
+      ingredients: ingredients
+        .map((r) => ({
+          name: r.name.trim(),
+          quantity: r.quantity,
+          unit: r.unit.trim(),
+        }))
+        .filter((r) => r.name),
       notes: notes.trim() || undefined,
     };
 
@@ -116,6 +135,60 @@ export function AddDishForm({
             onClick={() => toggleTag(t)}
           />
         ))}
+      </div>
+
+      {/* Ingredients */}
+      <div className="space-y-1">
+        <div className="text-[11px] font-medium text-slate-500">Інгредієнти</div>
+        {ingredients.map((row, i) => (
+          <div key={i} className="flex items-center gap-1">
+            <input
+              type="number"
+              inputMode="decimal"
+              min="0"
+              step="any"
+              value={row.quantity || ""}
+              onChange={(e) =>
+                updateRow(i, { quantity: parseFloat(e.target.value) || 0 })
+              }
+              placeholder="0"
+              className="w-12 rounded-md border border-slate-200 px-1.5 py-1 text-xs outline-none focus:border-slate-400"
+            />
+            <input
+              list="unit-options"
+              value={row.unit}
+              onChange={(e) => updateRow(i, { unit: e.target.value })}
+              placeholder="од."
+              className="w-16 rounded-md border border-slate-200 px-1.5 py-1 text-xs outline-none focus:border-slate-400"
+            />
+            <input
+              value={row.name}
+              onChange={(e) => updateRow(i, { name: e.target.value })}
+              placeholder="інгредієнт"
+              className="min-w-0 flex-1 rounded-md border border-slate-200 px-1.5 py-1 text-xs outline-none focus:border-slate-400"
+            />
+            <button
+              type="button"
+              onClick={() => removeRow(i)}
+              className="shrink-0 rounded p-1 text-slate-400 transition hover:bg-slate-100 hover:text-rose-500"
+              aria-label="Прибрати інгредієнт"
+            >
+              <Trash2 size={13} />
+            </button>
+          </div>
+        ))}
+        <datalist id="unit-options">
+          {UNIT_OPTIONS.map((u) => (
+            <option key={u} value={u} />
+          ))}
+        </datalist>
+        <button
+          type="button"
+          onClick={addRow}
+          className="inline-flex items-center gap-1 rounded-md border border-dashed border-slate-300 px-2 py-1 text-[11px] text-slate-500 transition hover:bg-white"
+        >
+          <Plus size={12} /> Інгредієнт
+        </button>
       </div>
 
       <input

@@ -1,7 +1,9 @@
-import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { ShoppingCart, Trash2 } from "lucide-react";
 import type { Assignment, Dish } from "../types";
 import { formatWeekRange } from "../lib/dates";
 import { DayColumn } from "./DayColumn";
+import { ShoppingList } from "./ShoppingList";
 
 export function WeekBlock({
   weekIndex,
@@ -18,24 +20,35 @@ export function WeekBlock({
   startDate: string;
   onRemove: () => void;
 }) {
+  const [showShopping, setShowShopping] = useState(false);
+
   return (
     <section className="space-y-2">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-2">
         <h2 className="text-sm font-semibold text-slate-500">
           Тиждень {weekIndex + 1}
           <span className="ml-2 font-normal text-slate-400">
             {formatWeekRange(startDate, weekIndex)}
           </span>
         </h2>
-        {isLast && (
+        <div className="flex items-center gap-1">
           <button
             type="button"
-            onClick={onRemove}
-            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+            onClick={() => setShowShopping(true)}
+            className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-500 transition hover:bg-emerald-50 hover:text-emerald-700"
           >
-            <Trash2 size={13} /> Прибрати тиждень
+            <ShoppingCart size={13} /> Список покупок
           </button>
-        )}
+          {isLast && (
+            <button
+              type="button"
+              onClick={onRemove}
+              className="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs text-slate-400 transition hover:bg-rose-50 hover:text-rose-600"
+            >
+              <Trash2 size={13} /> Прибрати тиждень
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-7">
@@ -50,6 +63,13 @@ export function WeekBlock({
           />
         ))}
       </div>
+
+      {showShopping && (
+        <ShoppingList
+          weekIndex={weekIndex}
+          onClose={() => setShowShopping(false)}
+        />
+      )}
     </section>
   );
 }

@@ -1,8 +1,15 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
-import type { Assignment, Dish, DishTag, MealType, PlannerState } from "./types";
+import type {
+  Assignment,
+  Dish,
+  DishTag,
+  Ingredient,
+  MealType,
+  PlannerState,
+} from "./types";
 import { newId } from "./lib/ids";
-import { buildInitialState } from "./seed";
+import { buildInitialState, seedIngredientsByName } from "./seed";
 import { mondayOf, parseISODate, toISODate } from "./lib/dates";
 
 export interface SlotRef {
@@ -15,6 +22,7 @@ export interface DishInput {
   name: string;
   mealTypes: MealType[];
   tags: DishTag[];
+  ingredients: Ingredient[];
   notes?: string;
 }
 
@@ -94,8 +102,24 @@ export const usePlanner = create<PlannerState & PlannerActions>()(
 
       resetAll: () => set(() => buildInitialState()),
     }),
-    // New storage key for the Ukrainian catalog; any older (Russian) saved
-    // state under the previous key is intentionally not migrated.
-    { name: "meal-planner-uk", version: 1 },
+    {
+      name: "meal-planner-uk",
+      version: 2,
+      // v2: dishes gained an `ingredients` field. Backfill from the seed by
+      // name where possible, otherwise an empty list.
+      migrate: (persisted, version) => {
+        const state = persisted as Partial<PlannerState> | undefined;
+        if (!state) return persisted as PlannerState;
+        if (version < 2 && state.dishes) {
+          for (const id of Object.keys(state.dishes)) {
+            const dish = state.dishes[id];
+            if (!dish.ingredients) {
+              dish.ingredients = seedIngredientsByName[dish.name] ?? [];
+            }
+          }
+        }
+        return state as PlannerState;
+      },
+    },
   ),
 );
